@@ -14,3 +14,11 @@
 
 
 
+(deftask run
+  []
+  (comp
+   (javac)
+   (with-pre-wrap fileset
+     (require 'thrift-clj.core)
+     fileset)
+   (repl)))
