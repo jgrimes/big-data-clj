@@ -1,4 +1,4 @@
-(ns big_data.core
+(ns big-data.core
   (:import [com.backtype.hadoop.pail
             Pail PailSpec
             PailStructure]
@@ -43,12 +43,16 @@
     true))
 
 (defn write-logins []
-  (let [login-pail (Pail/create "/tmp/logins" (new LoginPailStructure))
+  (let [login-pail (Pail/create "/tmp/logins" (LoginPailStructure.))
         out (.openWrite login-pail)]
     (doto out
       (.writeObject (Login. "alex" 1352679231))
       (.writeObject (Login. "bob" 1352674216))
       (.close))))
+
+(defn read-logins []
+  (let [login-pail (Pail. "/tmp/logins")]
+    (map #(println (.userName %)) login-pail)))
 
 (defn simple-pail-example []
   (let [pail (Pail/create "/tmp/mypail")
