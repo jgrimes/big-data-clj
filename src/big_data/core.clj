@@ -1,18 +1,21 @@
 (ns big_data.core
   (:import [com.backtype.hadoop.pail
-            Pail
+            Pail PailSpec
             PailStructure]
            [java.io
             ByteArrayOutputStream ByteArrayInputStream
             DataOutputStream DataInputStream
             IOException]
-           [java.lang RuntimeException]))
+           [java.lang RuntimeException]
+           [java.util Collections]))
 
 
 (defrecord Login [user-name #^long login-unix-time])
 
 (defrecord LoginPailStructure []
   PailStructure
+  (getType [this]
+    Login)
   (serialize [this login]
     (let [byte-out (ByteArrayOutputStream.)
           data-out (DataOutputStream. byte-out)
@@ -33,7 +36,19 @@
           (.read data-in user-bytes)
           (Login. (String. user-bytes) (.readLong data-in)))
         (catch IOException e
-          (throw (RuntimeException. e)))))))
+          (throw (RuntimeException. e))))))
+  (getTarget [this object]
+    Collections/EMPTY_LIST)
+  (isValidTarget [this dirs]
+    true))
+
+(defn write-logins []
+  (let [login-pail (Pail/create "/tmp/logins" (new LoginPailStructure))
+        out (.openWrite login-pail)]
+    (doto out
+      (.writeObject (Login. "alex" 1352679231))
+      (.writeObject (Login. "bob" 1352674216))
+      (.close))))
 
 (defn simple-pail-example []
   (let [pail (Pail/create "/tmp/mypail")
