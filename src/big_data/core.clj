@@ -54,6 +54,13 @@
   (let [login-pail (Pail. "/tmp/logins")]
     (map #(println (.userName %)) login-pail)))
 
+(defn append-data []
+  (let [login-pail (Pail. "/tmp/logins")
+        update-pail (Pail. "/tmp/updates")]
+    (doto login-pail
+      (.absorb update-pail)
+      (.consolidate))))
+
 (defn simple-pail-example []
   (let [pail (Pail/create "/tmp/mypail")
         os (.openWrite pail)]
