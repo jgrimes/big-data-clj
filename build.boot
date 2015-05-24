@@ -1,5 +1,5 @@
 (set-env!
- :source-paths #{"src" "gen-java"}
+ :source-paths #{"src" "gen-java" "classes"}
  :dependencies '[[thrift-clj "0.2.1"]
                  [ch.qos.logback/logback-classic "1.1.1"]
                  [org.apache.hadoop/hadoop-core "1.2.1"]
@@ -20,3 +20,4 @@
      (require 'thrift-clj.core)
      fileset)
    (repl)))
+

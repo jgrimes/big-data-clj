@@ -10,9 +10,7 @@
            [java.util Collections]))
 
 
-(alter-var-root (var *compile-path*) (constantly "src"))
-
-
+(alter-var-root (var *compile-path*) (constantly "classes"))
 
 (compile 'big_data.LoginPailStructure)
 (import 'big_data.LoginPailStructure)
