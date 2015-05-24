@@ -10,37 +10,13 @@
            [java.util Collections]))
 
 
-(defrecord Login [user-name #^long login-unix-time])
+(alter-var-root (var *compile-path*) (constantly "src"))
 
-(defrecord LoginPailStructure []
-  PailStructure
-  (getType [this]
-    Login)
-  (serialize [this login]
-    (let [byte-out (ByteArrayOutputStream.)
-          data-out (DataOutputStream. byte-out)
-          user-bytes (.getBytes (.user-name login))]
-      (try
-        (doto data-out
-          (.writeInt (alength user-bytes))
-          (.write user-bytes)
-          (.writeLong (.login-unix-time login))
-          (.close))
-        (catch IOException e
-          (throw (RuntimeException. e))))
-      (.toByteArray byte-out)))
-  (deserialize [this serialized]
-    (let [data-in (DataInputStream. (ByteArrayInputStream. serialized))]
-      (try
-        (let [user-bytes (byte-array (.readInt data-in))]
-          (.read data-in user-bytes)
-          (Login. (String. user-bytes) (.readLong data-in)))
-        (catch IOException e
-          (throw (RuntimeException. e))))))
-  (getTarget [this object]
-    Collections/EMPTY_LIST)
-  (isValidTarget [this dirs]
-    true))
+
+
+(compile 'big_data.LoginPailStructure)
+(import 'big_data.LoginPailStructure)
+(import big_data.LoginPailStructure.Login)
 
 (defn write-logins []
   (let [login-pail (Pail/create "/tmp/logins" (LoginPailStructure.))
@@ -52,7 +28,7 @@
 
 (defn read-logins []
   (let [login-pail (Pail. "/tmp/logins")]
-    (map #(println (.userName %)) login-pail)))
+    (map #(println (.user-name %)) login-pail)))
 
 (defn append-data []
   (let [login-pail (Pail. "/tmp/logins")
@@ -69,3 +45,6 @@
       (.writeObject (byte-array [1 2 3 4]))
       (.writeObject (byte-array [1 2 3 4 5]))
       (.close))))
+
+
+
