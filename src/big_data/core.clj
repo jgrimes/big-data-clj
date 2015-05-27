@@ -30,12 +30,25 @@
   (let [login-pail (Pail. "/tmp/logins")]
     (map #(println (.user-name %)) login-pail)))
 
+(defn read-logins-path [path]
+  (let [login-pail (Pail. path)]
+    (map #(println (.user-name %)) login-pail)))
+
 (defn append-data []
   (let [login-pail (Pail. "/tmp/logins")
         update-pail (Pail. "/tmp/updates")]
     (doto login-pail
       (.absorb update-pail)
       (.consolidate))))
+
+(defn partition-data []
+  (let [pail (Pail/create "/tmp/partitioned_logins"
+                          (PartitionedLoginPailStructure.))
+        os (.openWrite pail)]
+    (doto os
+      (.writeObject (Login. "chris" 1352702020))
+      (.writeObject (Login. "david" 1352788472))
+      (.close))))
 
 (defn simple-pail-example []
   (let [pail (Pail/create "/tmp/mypail")
