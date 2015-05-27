@@ -13,7 +13,9 @@
 (alter-var-root (var *compile-path*) (constantly "classes"))
 
 (compile 'big_data.LoginPailStructure)
+(compile 'big_data.PartitionedLoginPailStructure)
 (import 'big_data.LoginPailStructure)
+(import 'big_data.PartitionedLoginPailStructure)
 (import big_data.LoginPailStructure.Login)
 
 (defn write-logins []
