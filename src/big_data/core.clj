@@ -1,7 +1,8 @@
 (ns big-data.core
   (:import [com.backtype.hadoop.pail
             Pail PailSpec
-            PailStructure]
+            PailStructure
+            SequenceFileFormat]
            [java.io
             ByteArrayOutputStream ByteArrayInputStream
             DataOutputStream DataInputStream
@@ -40,6 +41,18 @@
     (doto login-pail
       (.absorb update-pail)
       (.consolidate))))
+
+(defn create-compressed-pail []
+  (let [options (java.util.HashMap.)]
+    (do
+      (doto options
+        (.put SequenceFileFormat/CODEC_ARG SequenceFileFormat/CODEC_ARG_GZIP)
+        (.put SequenceFileFormat/TYPE_ARG SequenceFileFormat/TYPE_ARG_BLOCK)
+        )
+      (Pail/create "/tmp/compressed" (PailSpec.
+                                      "SequenceFile"
+                                      options
+                                      (LoginPailStructure. ))))))
 
 (defn partition-data []
   (let [pail (Pail/create "/tmp/partitioned_logins"
